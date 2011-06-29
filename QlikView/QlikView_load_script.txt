@@ -1,0 +1,260 @@
+SET ThousandSep=',';
+SET DecimalSep='.';
+SET MoneyThousandSep=',';
+SET MoneyDecimalSep='.';
+SET MoneyFormat='$#,##0.00;-$#,##0.00';
+SET TimeFormat='h:mm:ss TT';
+SET DateFormat='DD/MM/YYYY';
+SET TimestampFormat='DD/MM/YYYY h:mm:ss[.fff] TT';
+SET MonthNames='Jan;Feb;Mar;Apr;May;Jun;Jul;Aug;Sep;Oct;Nov;Dec';
+SET DayNames='Mon;Tue;Wed;Thu;Fri;Sat;Sun';
+
+
+SET from_extract_dt = "2011-05-01";
+
+
+
+qualify weighting_factor;
+
+ODBC CONNECT TO topgun_twitter_analytics;
+
+BridgeSingleKeywords:
+SQL SELECT 	group_id AS bridge_group_single_keyword_id, 
+	dim_single_keyword_id, 
+	weighting_factor
+FROM
+	topgun_twitter_analytics.bridge_group_single_keywords 
+WHERE
+	rec_create_date > '$(from_extract_dt)';
+	
+DimSingleKeywords:
+SQL SELECT
+	ID AS dim_single_keyword_id, 
+	single_keywords 
+FROM 
+	topgun_twitter_analytics.dim_single_keywords;
+
+BridgeDoubleKeywords:
+SQL SELECT 	group_id AS bridge_group_double_keyword_id, 
+	dim_double_keyword_id, 
+	weighting_factor
+FROM
+	topgun_twitter_analytics.bridge_group_double_keywords 
+WHERE
+	rec_create_date > '$(from_extract_dt)';
+	
+DimDoubleKeywords:	
+SQL SELECT
+	ID AS dim_double_keyword_id, 
+	double_keywords 
+FROM 
+	topgun_twitter_analytics.dim_double_keywords;
+
+BridgeTripleKeywords:	
+SQL SELECT 	group_id AS bridge_group_triple_keyword_id, 
+	dim_triple_keyword_id, 
+	weighting_factor
+FROM
+	topgun_twitter_analytics.bridge_group_triple_keywords 
+WHERE
+	rec_create_date > '$(from_extract_dt)';
+
+DimTripleKeywords:	
+SQL SELECT
+	ID AS dim_triple_keyword_id, 
+	triple_keywords 
+FROM 
+	topgun_twitter_analytics.dim_triple_keywords;
+	
+BridgeQuadrupleKeywords:
+SQL SELECT 	group_id AS bridge_group_quadruple_keyword_id, 
+	dim_quadruple_keyword_id, 
+	weighting_factor
+FROM
+	topgun_twitter_analytics.bridge_group_quadruple_keywords 
+WHERE
+	rec_create_date > '$(from_extract_dt)';
+
+DimQuadrupleKeywords:	
+SQL SELECT
+	ID AS dim_quadruple_keyword_id, 
+	quadruple_keywords 
+FROM 
+	topgun_twitter_analytics.dim_quadruple_keywords;
+
+BridgeGroupHashtags:	
+SQL SELECT 	group_id AS bridge_group_hashtag_id, 
+	dim_hashtag_id, 
+	weighting_factor
+FROM 
+	topgun_twitter_analytics.bridge_group_hashtags
+WHERE
+	rec_create_date > '$(from_extract_dt)';
+
+DimHashtags:	
+SQL SELECT
+	ID AS dim_hashtag_id, 
+	hashtag 
+FROM 
+	topgun_twitter_analytics.dim_hashtags;
+
+BridgeGroupUserMentions:	
+SQL SELECT 	group_id AS bridge_group_user_mention_id, 
+	dim_user_mention_id, 
+	weighting_factor
+FROM 
+	topgun_twitter_analytics.bridge_group_user_mentions
+WHERE
+	rec_create_date > '$(from_extract_dt)';
+
+DimUserMentions:	
+SQL SELECT
+	ID AS dim_user_mention_id, 
+	user_mention 
+FROM 
+	topgun_twitter_analytics.dim_user_mentions;	
+
+BridgeGroupReferredUrls:	
+SQL SELECT 	group_id AS bridge_group_referred_url_id, 
+	dim_referred_url_id, 
+	weighting_factor 
+FROM 
+	topgun_twitter_analytics.bridge_group_referred_urls
+WHERE
+	rec_create_date > '$(from_extract_dt)';
+	
+DimReferredUrls:	
+SQL SELECT 	ID AS dim_referred_url_id, 
+	short_URL, 
+	long_URL, 
+	domain_URL, 
+	page_title, 
+	meta_keywords, 
+	meta_description 
+FROM 
+	topgun_twitter_analytics.dim_referred_urls
+WHERE
+	rec_create_date > '$(from_extract_dt)';
+
+DimLocation:
+SQL SELECT 	ID AS dim_location_id, 
+	raw_location, 
+	city, 
+	prov_state, 
+	country, 
+	latitude, 
+	longitude, 
+	is_derived_from_profile
+FROM 
+	topgun_twitter_analytics.dim_location;
+
+
+DimTime:
+SELECT 	ID AS dim_time_id, 
+	utc_datetime, 
+	utc_offset, 
+	local_datetime, 
+	local_day_of_week, 
+	local_day_number_in_month, 
+	local_week_number_in_year, 
+	local_month, 
+	local_quarter, 
+	local_weekday_flag, 
+	local_last_day_in_month_flag, 
+	local_hour
+FROM 
+	topgun_twitter_analytics.dim_time 
+WHERE
+	rec_create_date > '$(from_extract_dt)';
+
+DimTweetSource:
+SQL SELECT 	
+	ID AS dim_tweet_source_id, 
+	source_url, 
+	source_name
+FROM 
+	topgun_twitter_analytics.dim_tweet_sources;
+
+DimTweets:
+SQL SELECT 	
+	ID AS dim_tweet_id, 
+	tweet_ID, 
+	tweet_status 
+FROM 
+	topgun_twitter_analytics.dim_tweets
+WHERE
+	rec_create_date > '$(from_extract_dt)';	
+
+SourceTopics:
+SQL SELECT
+	ID AS source_topic_id,
+	topic_description
+FROM
+	topgun_twitter_analytics.source_topics;
+
+TwitterKeywordSearches:
+SQL SELECT 	ID AS dim_twitter_keyword_search_id, 
+	source_keyword_id, 
+	keywords, 
+	source_topic_id, 
+	source_topic_description, 
+	is_phrase, 
+	language_code, 
+	latitude AS search_latitude, 
+	longitude AS search_longitude, 
+	radius, 
+	radius_unit_id
+FROM 
+	topgun_twitter_analytics.dim_twitter_keyword_searches;
+
+DimTwitterUsers:
+SQL SELECT 	ID AS dim_twitter_user_id, 
+	twitter_id, 
+	NAME, 
+	screen_name, 
+	location, 
+	description, 
+	profile_image_url, 
+	url, 
+	utc_offset AS user_utc_offset, 
+	time_zone, 
+	protected, 
+	profile_background_color, 
+	profile_text_color, 
+	profile_link_color, 
+	profile_sidebar_fill_color, 
+	profile_sidebar_border_color, 
+	profile_background_image_url, 
+	profile_background_tile
+FROM 
+	topgun_twitter_analytics.dim_twitter_users;
+
+FactTweets:
+SQL SELECT 	ID AS fact_tweet_id, 
+	dim_tweet_id, 
+	tweet_dt, 
+	dim_twitter_keyword_search_id, 
+	dim_time_id, 
+	dim_location_id, 
+	dim_tweet_source_id, 
+	from_dim_twitter_user_id AS dim_twitter_user_id, 
+	bridge_group_referred_url_id, 
+	bridge_group_single_keyword_id, 
+	bridge_group_double_keyword_id, 
+	bridge_group_triple_keyword_id, 
+	bridge_group_quadruple_keyword_id, 
+	bridge_group_user_mention_id, 
+	bridge_group_hashtag_id, 
+	num_user_mentions, 
+	num_hashtags, 
+	num_embedded_urls, 
+	num_bitly_urls, 
+	num_bitly_user_clicks, 
+	num_bitly_global_clicks, 
+	num_keywords, 
+	followers_count, 
+	following_count
+FROM 
+	topgun_twitter_analytics.fact_tweets
+WHERE
+	rec_create_date > '$(from_extract_dt)';

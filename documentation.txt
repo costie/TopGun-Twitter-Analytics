@@ -1,0 +1,290 @@
+++++++++++++++++++++++++++++Introduction++++++++++++++++++++++++++++++++++++++++
+TopGun Twitter Analytics is an open source data warehouse for collecting and
+analyzing Twitter topics.  A topic is made up of one or more keywords.
+
+Tweets that match the keywords are downloaded locally, enriched with
+other data sources (e.g. Bit.ly) and then stored in a "Star Schema" in
+a MySQL RDBMS.
+
+TopGun Twitter Analytics is intended to be used in the following ways: 
+1. As a stand-alone Twitter analytics tool.
+2. As the basis for an extended Twitter analytics tool. E.g. blending in your
+   own data sources
+3. As a self contained reference data warehouse to learn about and understand
+   how enterprise data warehouses are built and maintained, albeit on a smaller
+   scale. In particular the tool covers the following concepts:
+     a) Dimensional modeling and Star Schema design and best practices
+     b) ETL (Extract Transform Load) design and best practices
+     g) Metadata
+================================================================================
+********************************************************************************
+*These instructions will show you how to install TopGun Twitter Analytics      *
+*(TopGun hereon).  If you do not already have the pre-requisites, it should    *
+*take under an hour to download and install all of these applications.  Once   *
+*you have all the pre-requisites downloaded and installed, it should take an   *
+*hour to complete the installation and configuration.                          *
+********************************************************************************
+================================================================================
+++++++++++++++++++++++++++Pre-requisites++++++++++++++++++++++++++++++++++++++++
+Before you can begin using TopGun you must have the following installed and
+operational:
+1. MySQL Community Server 5.1 (may work on later versions)
+2. Java 6 (or later)
+3. Pentaho Data Integration Community Edition 4.01 (may work on later versions)
+4. A Bit.ly developer key
+
+It is also recommended (although not strictly required) you get a GUI tool for
+MySQL.  SQLyog Community Edition was used during original development.  It is
+also recommended to have a Business Intelligence (BI hereon) tool. QlikView 10
+was used during original development to explore and validate the data. We have
+included a QlikView 10 load script which you can use with the personal edition
+of QlikView 10.
+
+Pre-requisite download locations:
+1. MySQL Community Server 5.1 can be downloaded from here:
+http://dev.mysql.com/downloads/mysql/5.1.html
+TIP: a) Before downloading, the MySQL web site will ask you to register.  You
+        can skip the registration by clicking the link "No thanks, just take me
+        to the downloads!"
+     b) The following are installation option recommendations. Other options
+        are permitted.  However we have only tested on the below configuration
+     c) Install as "Typical"
+     d) Choose "Detailed Configuration"
+     e) Choose "Server Machine"
+     f) Choose "Transactional Database Only"
+     g) Choose "Decision Support (DSS)/OLAP"
+     h) Standard Character Set
+
+2. Java 6 or later. NB: For 64-bit Windows users, ensure you have the 64-bit
+   version of Java.  Or, see the "Gotchas" section below for instructions on
+   running Pentaho on 32-bit Java.
+
+3. Penataho Data Integration 4.01, which can be downloaded from here:
+http://sourceforge.net/projects/pentaho/files/Data%20Integration/4.0.1-stable/pdi-ce-4.0.1-stable.zip/download
+TIP: a) Ensure you have Java 6.0 or later installed.
+     a) Create a local folder (e.g. c:\PDI_401\)
+     b) Extract the contents of the ZIP file to the local folder
+
+4.  a) A bit.ly developer account can be had by signing up here:
+http://bit.ly/a/sign_up
+
+    b) Once you have registered as a developer, you can retrieve your bit.ly
+developer key here:
+http://bit.ly/a/your_api_key/
+
+5. SQLYog Community Edition 9.02 can be downloaded from here:
+http://code.google.com/p/sqlyog/downloads/list
+
+6. QlikView 10 can be downloaded from here:
+http://qlikview.com/download
+================================================================================
+++++++++++++++++++++++++++++Installation++++++++++++++++++++++++++++++++++++++++
+1. Deploy the "topgun_twitter_analytics" database.  Ensure you are logged into
+your MySQL server as 'root' and run the included script
+"twitter_analytics_db.sql".
+
+2. Create a new MySQL database user "topgun", choosing a secure password.
+Ensure "topgun" has full privileges in the "topgun_twitter_analytics" database.
+
+3. Create a new Pentaho Repository as a database repository in your MySQL
+database. This will require performing the following steps (experienced Pentaho
+users can do this as they see fit):
+   a) In MySQL, create a new database calling it "topgun_repository".
+   b) Start Spoon.  This should prompt you with the Repository Explorer.  If it
+      does not, just hit Ctrl-R.
+   c) On the top-right part of the Repository Explorer dialog, hit the green +
+      button.  A new dialog should appear.
+   d) Choose "Kettle database repository"
+   e) Click the "New" button to create a new connection to your repository DB
+   f) Create the new connection as such:
+      i)    Connection Type = "MySQL"
+      ii)   Access: "Native (JDBC)"
+      iii)  Host Name = "localhost"
+      iv)   Database Name "topgun_repository"
+      v)    Port Number: "3306"
+      vi)   User Name: "root"
+      vii)  Password: [your root password]
+      viii) Connection Name: "topgun_repository"
+   g) After creating the new connection you should be back at the "Repository
+      Information" dialog.  Enter the following fields as such:
+      i)   Select Database Connection: [the connection you just created]
+      ii)  ID: "TGTAR"
+      iii) Name: "TopGun Twitter Analytics Repository"
+   h) Hit "Create or Upgrade"
+   i) Click "Yes" when prompted for confirmation
+   j) Click "No" when prompted to do a dry run of the generated SQL.
+   k) You should be back at the Repository Information dialog, click OK
+   l) You should now be back at the "Repository Connection" dialog
+   m) Select the repository you just created, and type in the default
+      user ID and password: "Admin/admin"
+   n) You are now ready to import the TopGun Twitter Analytics repository
+
+4. In Spoon navigate to Tools->Repository->Import Repository... and choose the
+   file: "PDI_topgun_repository.xml"
+
+5. From within the Repository Explorer (Ctrl-E), open the
+   twitter_analytics\RunMe job
+
+6. From the explorer pane on the left, under Database connections, open the
+   connection "twitter_analytics" and ensure you set the password for the user
+   "topgun" to the correct password, which you should have configured in step 2.
+
+7. Confirm that the "twitter_analytics" connection is working properly by
+   opening its configuration and clicking the "Test" button.
+
+8. From within a MySQL session in the "topgun_twitter_analytics" database, edit
+   the following SQL query, replacing "your bitly logon" and "your bitly
+   developer key" with your actual logon and developer key, respectively:
+
+   UPDATE
+     settings
+   SET
+     attribute_value = 'your bitly logon'
+   WHERE
+     attribute_id = 'BITLY_LOGIN';
+
+   UPDATE
+     settings
+   SET
+     attribute_value = 'your bitly developer key'
+   WHERE
+     attribute_id = 'BITLY_DEVKEY';
+
+9. You can now run TopGun Twitter Analytics, and begin collecting data.  To do
+   so, simply:
+     a) Run Spoon
+     b) Open the "TopGun Twitter Analytics Repository"
+     c) Hit Ctrl-E to open the Repository explorer
+     d) Browse to /twitter_analytics/ and open the job "RunMe"
+     e) Hit F9 to run the job.
+================================================================================
+++++++++++++++++++++++++++Configuring topics and keywords+++++++++++++++++++++++
+By default the topic "NOSQL" has been added with several keywords corresponding
+to popular NOSQL databases (e.g. MongoDB, CouchDB, etc.).
+
+If you wish to add a new topic (e.g. "vegetable gardening"), follow these simple
+steps:
+
+1. Log into your MySQL topgun_twitter_analytics database
+2. Add a row to the source_topics table setting the topic_description to
+   "vegetable gardening". Take note of the auto generated topic ID
+3. Add keywords which pertain to vegetable gardening to source_keywords ensuring
+   you set the source_topic_id to the previously generated topic ID for
+   "vegetable gardening".  For example:
+     a) set keywords = 'vegetable garden' and is_phrase = 'Y'.  This will ensure
+        the words are searched as a phrase.
+     b) set keywords = 'tomato -ketchup'.  This will ensure tweets with ketchup
+        are excluded from search results)
+     c) set keywords = 'eggplant'
+     d) set keywords = 'vegetable garden soil'.  This will ensure tweets with
+        all three words (in any order) are returned.
+     e) set keywords = "potato"
+4. Run the "RunMe" job from Spoon
+5. Begin analyzing data from the "fact_tweets" table.
+
+Remember, to understand what any of the data elements mean, just check the
+column comment.
+================================================================================
++++++++++++++++++++++++++Known Gotchas/Bugs/Issues++++++++++++++++++++++++++++++
+1. When running on 64-bit versions of Windows (e.g. Windows 7 64-bit), it is 
+   recommended you install the 64-bit version of Java.  
+
+   A 64-bit version of Java for Windows can be downloaded here:
+   http://www.java.com/en/download/manual.jsp
+
+   Alternatively, if you wish to use 32-bit Java make the following changes in
+   the spoon.bat file, located in Pentaho "data_integration" director.  Change:
+    FOR /F %%a IN ('java -version 2^>^&1^|find /C "64-Bit"') DO (SET /a
+    IS64BITJAVA=%%a)
+   
+    to
+
+    set IS64BITJAVA=0 
+    FOR /F %%a IN ('java -version 2^>^&1^|find /C "64-Bit"') DO (SET /a
+    IS64BITJAVA=%%a)
+
+
+2. In the "RunMe" job the "Wait for Twitter rate limit to reset" occasionally
+   hangs indefinitely.  The purpose of this step is to wait for Twitter's rate
+   limit of 150 requests per hour to reset. The rate limit limits the number of
+   user lookups (which is required to obtain Follower Count) TopGun TA can
+   perform.  Therefore TopGun TA checks the rate the limit, and if it is maxed
+   out, will wait until the reset time.  This should not be more than one hour.
+   If the job is stuck on this step for more than an hour, the job should be
+   restarted.
+
+3. Occasionally the "Extract URLs from Tweets" step in the main "RunMe" job will
+   fail due to timeouts of the longurl.org API.  This will result in the
+   assignment of "staging_fact_tweets.bridge_group_referred_url" to an invalid
+   row in "bridge_group_referred_urls".  It is possible to correct this by
+   running the following query and re-ruruning TopGun TA:
+
+   UPDATE
+     staging_fact_tweets
+   SET
+     num_embedded_urls = NULL
+
+   If you do not run this query, and TopGun TA is re-run (which is normal
+   given that TopGun TA is expected to run in a continual loop) then the
+   invalid assignment will persist.  However this will not prevent future Tweets
+   from being downloaded and processed.
+
+   This issue will be fixed in a future version of TopGun TA.
+   
+================================================================================
+++++++++++++++++++++++++++++Command Line Automation+++++++++++++++++++++++++++++
+TopGun Twitter Analytics should be run continually without direct user
+intervention.  A simple VBS script has been included for the Windows operating
+system.  It would be relatively simple to convert this script to a UNIX shell
+script or a PowerShell script.
+
+NB: The script requires the Pentaho TopGun TA repository user ID and password.
+It is recommended for security reasons to derive these from user environment
+variables (which you would need to create), as opposed to hard coding them in
+the script itself.
+
+The script is found in the TopGun TA package and is called:
+"launch_topgun_ta.vbs"
+================================================================================
+++++++++++++++++++++++++++++++Analyzing the Data++++++++++++++++++++++++++++++++
+If you have no other tools, analyzing the data by way of SQL querying is one
+option.
+
+However, it is generally easier to explore the data using an interactive
+"Business Intelligence" tool. If you already have a BI tool it may be worth
+using that.
+
+The in-memory tool "QlikView" by QlikTech is a relatively simple tool to
+configure, as it does not rely on OLAP pre-aggregations.  A Personal
+Edition is free to download, with the restriction that you cannot share
+QlikView documents.  However, a load script has been provided with this package
+which will allow you to very easily load the data into your own QlikView document
+and from there build out interactive charts.
+
+There are no open source analogs to QlikView.  However, there are open source BI
+tools such as Pentaho Business Intelligence which are also worth exploring.
+================================================================================
+++++++++++++++++++++++++++++++Additional Documentation++++++++++++++++++++++++++
+TopGun TA was designed to be self-documenting, this is one of the main reasons
+to use ETL tools.  They effectively provide self-documenting code.  Furthermore
+it is possible to query the Pentaho repository in SQL.  For example, it is
+easily possible to write a query to determine which Transformations are
+responsible for writing to "staging_fact_tweets".
+
+Furthermore, every data element has a plain English data definition associated
+with it.  It is possible to query the MySQL information_schema to produce a
+data dictionary.
+================================================================================
+++++++++++++++++++++++++++++++++++++++++About+++++++++++++++++++++++++++++++++++
+The name "TopGun Twitter Analytics" makes reference to the United States Navy
+Strike Fighter Tactics Instructor program (SFTI program), a.k.a. "TOPGUN".  The 
+name alludes to decisive air power (a la Twitter, Tweets, birds, flight,
+etc.) in an instructional setting.
+
+TopGun TA is being provided as service from the not-for-profit IRMAC (Toronto
+chapter of DAMA-I). Questions regarding the GNU AGPL can be e-mailed to IRMAC's
+Director of Education: education@irmac.ca
+
+The original author of TopGun TA is Neil Hepburn (serving as director of
+education to IRMAC).
+================================================================================
