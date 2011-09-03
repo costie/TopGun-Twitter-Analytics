@@ -65,7 +65,7 @@
     <clusterschemas>
     </clusterschemas>
   <modified_user>admin</modified_user>
-  <modified_date>2011&#47;05&#47;28 22:07:09.000</modified_date>
+  <modified_date>2011&#47;09&#47;03 11:20:32.000</modified_date>
   </info>
   <notepads>
   </notepads>
@@ -446,7 +446,7 @@ UNIX_TIMESTAMP() AS seconds_since_epoch</sql>
     <clusterschemas>
     </clusterschemas>
   <modified_user>admin</modified_user>
-  <modified_date>2011&#47;05&#47;30 20:25:48.000</modified_date>
+  <modified_date>2011&#47;09&#47;03 11:20:32.000</modified_date>
   </info>
   <notepads>
   </notepads>
@@ -3083,7 +3083,7 @@ WHERE
     <clusterschemas>
     </clusterschemas>
   <modified_user>admin</modified_user>
-  <modified_date>2011&#47;05&#47;28 22:07:10.000</modified_date>
+  <modified_date>2011&#47;09&#47;03 11:20:33.000</modified_date>
   </info>
   <notepads>
   </notepads>
@@ -4606,7 +4606,7 @@ ORDER BY
     <clusterschemas>
     </clusterschemas>
   <modified_user>admin</modified_user>
-  <modified_date>2011&#47;05&#47;28 22:07:11.000</modified_date>
+  <modified_date>2011&#47;09&#47;03 11:20:34.000</modified_date>
   </info>
   <notepads>
   </notepads>
@@ -4796,7 +4796,7 @@ WHERE
     <clusterschemas>
     </clusterschemas>
   <modified_user>admin</modified_user>
-  <modified_date>2011&#47;05&#47;28 22:07:11.000</modified_date>
+  <modified_date>2011&#47;09&#47;03 11:23:42.000</modified_date>
   </info>
   <notepads>
   </notepads>
@@ -5713,10 +5713,10 @@ var tweet;
 var is_first_row=true;
 
 
-twitter_result_prefix = substr(json_result, 0, 12);
+twitter_result_prefix = substr(json_result, 0, 15);
 
 
-if (twitter_result_prefix == &apos;{&quot;results&quot;:[&apos;) {
+if (twitter_result_prefix == &apos;{&quot;completed_in&quot;&apos;) {
 
 	api_response_valid = true;
 	tweet = JSON.parse( unescape(json_result) );
@@ -6370,7 +6370,7 @@ ORDER BY
     <clusterschemas>
     </clusterschemas>
   <modified_user>admin</modified_user>
-  <modified_date>2011&#47;05&#47;28 22:07:12.000</modified_date>
+  <modified_date>2011&#47;09&#47;03 11:20:34.000</modified_date>
   </info>
   <notepads>
     <notepad>
@@ -8293,7 +8293,7 @@ WHERE
     <clusterschemas>
     </clusterschemas>
   <modified_user>admin</modified_user>
-  <modified_date>2011&#47;05&#47;28 22:07:13.000</modified_date>
+  <modified_date>2011&#47;09&#47;03 11:20:35.000</modified_date>
   </info>
   <notepads>
   </notepads>
@@ -8620,7 +8620,7 @@ FROM
     <clusterschemas>
     </clusterschemas>
   <modified_user>admin</modified_user>
-  <modified_date>2011&#47;05&#47;28 22:07:13.000</modified_date>
+  <modified_date>2011&#47;09&#47;03 11:20:35.000</modified_date>
   </info>
   <notepads>
   </notepads>
@@ -8898,7 +8898,7 @@ FROM
     <clusterschemas>
     </clusterschemas>
   <modified_user>admin</modified_user>
-  <modified_date>2011&#47;05&#47;28 22:07:13.000</modified_date>
+  <modified_date>2011&#47;09&#47;03 11:20:35.000</modified_date>
   </info>
   <notepads>
   </notepads>
@@ -9147,7 +9147,7 @@ FROM
     <clusterschemas>
     </clusterschemas>
   <modified_user>admin</modified_user>
-  <modified_date>2011&#47;05&#47;28 22:07:13.000</modified_date>
+  <modified_date>2011&#47;09&#47;03 11:20:35.000</modified_date>
   </info>
   <notepads>
   </notepads>
@@ -9469,7 +9469,7 @@ FROM
     <clusterschemas>
     </clusterschemas>
   <modified_user>admin</modified_user>
-  <modified_date>2011&#47;05&#47;28 22:07:14.000</modified_date>
+  <modified_date>2011&#47;09&#47;03 11:20:36.000</modified_date>
   </info>
   <notepads>
   </notepads>
@@ -10033,7 +10033,7 @@ ORDER BY
     <clusterschemas>
     </clusterschemas>
   <modified_user>admin</modified_user>
-  <modified_date>2011&#47;05&#47;28 22:07:14.000</modified_date>
+  <modified_date>2011&#47;09&#47;03 11:20:36.000</modified_date>
   </info>
   <notepads>
   </notepads>
